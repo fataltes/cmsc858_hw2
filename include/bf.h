@@ -20,11 +20,10 @@ public:
     {
        uint64_t numKeys = numKeysIn;
        float fpr = fprIn;
-       filterSize = static_cast<uint64_t>(std::ceil(-1*numKeys*std::log(fpr)/std::pow(std::log(2.0), 2))); // chosen based on numKeys and fpr
-       numHashes = static_cast<uint64_t>(std::ceil(-1*std::log2(fpr)));
+       filterSize = static_cast<uint64_t>(std::ceil(-1.0*numKeys*std::log(fpr)/std::pow(std::log(2.0), 2))); // chosen based on numKeys and fpr
+       numHashes = static_cast<uint64_t>(std::ceil(-1.0*std::log2(fpr)));
        std::cerr << "filter size: " << filterSize << " , numHashes: " << numHashes << "\n";
        bf.resize(filterSize);
-       numHashes = 5; // chosen based on numKeys and fpr
        for (uint32_t i = 0; i < numHashes; i++) {
            seeds.push_back(i*i);
        }
@@ -33,8 +32,13 @@ public:
     Bf(std::string &bfFileIn) {
         std::ifstream ifile(bfFileIn, std::ios::binary);
         ifile.read(reinterpret_cast<char*>(&numHashes), sizeof(numHashes));
+        for (uint32_t i = 0; i < numHashes; i++) {
+            seeds.push_back(i*i);
+        }
         bf.deserialize(ifile);
+        filterSize = bf.size();
         ifile.close();
+        std::cerr << "filter size: " << filterSize << " , numHashes: " << numHashes << "\n";
     }
 
     void construct();

@@ -13,8 +13,6 @@
 //#include "CLI/Timer.hpp"
 using namespace clipp;
 
-int benchmarkRank(Opts &opts);
-int benchmarkSelect(Opts &opts);
 int constructBf(Opts &opts);
 int queryBf(Opts &opts);
 
@@ -49,7 +47,7 @@ int main(int argc, char* argv[])  {
 
     bool showHelp = false;
     auto cli = (
-            (bfConstructMode |
+            (bfConstructMode | bfQueryMode |
                     command("help").set(selected,mode::help) |
             option("--help", "-h").set(showHelp, true) % "show help"
             ));
@@ -71,8 +69,10 @@ int main(int argc, char* argv[])  {
     if(res) {
         switch(selected) {
             case mode::construct_bf:
+                std::cerr << "construct_bf\n";
                 constructBf(opts); break;
             case mode::query_bf:
+                std::cerr << "query_bf\n";
                 queryBf(opts); break;
             case mode::help: std::cout << make_man_page(cli, "bvOperate"); break;
         }

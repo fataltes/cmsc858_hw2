@@ -4,6 +4,11 @@
 
 #include "bf.h"
 #include "hashUtil.h"
+#include <chrono>
+
+#include <ghc/filesystem.hpp>
+
+namespace fs = ghc::filesystem;
 
 void Bf::construct() {
     std::ifstream infile(inputKeyFile);
@@ -56,4 +61,55 @@ int queryBf(Opts &opts) {
         std::cout << query << ":" << (found?"Y":"N") << "\n";
     }
     return EXIT_SUCCESS;
+}
+
+int reportBf(ReportOpts &opts) {
+    std::string path = opts.inputDir;
+    std::ofstream report(opts.reportFile);
+    for (const auto & entry : fs::directory_iterator(path)) {
+        auto pathObj = entry.path();
+        std::string fileName = pathObj.string();
+        std::cerr << fileName << std::endl;
+        // get total number of lines in the input file (total keys)
+        uint64_t count = 0;
+        std::string line;
+        std::ifstream file(fileName);
+        while (getline(file, line))
+            count++;
+        file.close();
+        float fpr = opts.fpRateStart;
+        while (fpr < opts.fpRateEnd) {
+            std::string idxFile = opts.outputDir + pathObj.filename().string() + "_" + std::to_string(fpr) + ".idx";
+            std::cerr << idxFile << "\n";
+            auto start = std::chrono::high_resolution_clock::now();
+            Bf bf(fileName, idxFile, count, fpr);
+            bf.construct();
+            auto finish = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = finish - start;
+            uint64_t constructionTime = elapsed.count();
+            std::cerr << count << " " << fpr << " " << elapsed.count() << " s\n";
+            for (const auto & queryf : fs::directory_iterator(opts.queryDir)) {
+                auto pathObj = queryf.path();
+                std::string queryfile = queryf.path();
+                std::cerr << queryfile << std::endl;
+                std::ifstream queries(queryfile);
+                std::string query;
+                start = std::chrono::high_resolution_clock::now();
+                uint64_t posCount{0};
+                while (queries.good()) {
+                    queries >> query;
+                    if (queries.good())
+                        if (bf.query(query)) {
+                            posCount++;
+                        }
+                    std::cerr << "\r" << posCount;
+                }
+                finish = std::chrono::high_resolution_clock::now();
+                elapsed = finish - start;
+                report << count << "\t" << fpr << "\t" << posCount << "\t" << elapsed.count() << "\t" << constructionTime << "\n";
+            }
+            fpr += opts.fpRateJump;
+        }
+    }
+    report.close();
 }

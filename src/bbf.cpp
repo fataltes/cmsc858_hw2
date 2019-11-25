@@ -112,7 +112,9 @@ int reportBBf(ReportOpts &opts) {
                 }
                 finish = std::chrono::high_resolution_clock::now();
                 elapsed = finish - start;
-                report << count << "\t" << fpr << "\t" << posCount << "\t" << elapsed.count() << "\t" << constructionTime << "\n";
+                report << count << "\t" << fpr << "\t" << posCount
+                       << "\t" << elapsed.count() << "\t" << constructionTime
+                       << "\t" << queryf.path().filename() << "\n";
             }
             fpr += opts.fpRateJump;
         }

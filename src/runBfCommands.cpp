@@ -87,7 +87,7 @@ int main(int argc, char* argv[])  {
                 std::cerr << "query_bf\n";
                 queryBf(opts); break;
             case mode::report:
-                std::cerr << "report_bf_construction\n";
+                std::cerr << "report_on_bf\n";
                 reportBf(reportOpts); break;
             case mode::help: std::cout << make_man_page(cli, "bf"); break;
         }

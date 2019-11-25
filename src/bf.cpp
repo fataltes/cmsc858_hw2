@@ -87,7 +87,7 @@ int reportBf(ReportOpts &opts) {
             auto finish = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = finish - start;
             uint64_t constructionTime = elapsed.count();
-            std::cerr << count << " " << fpr << " " << elapsed.count() << " s\n";
+            std::cerr << count << " " << fpr << " " << elapsed.count() << "\n";
             for (const auto & queryf : fs::directory_iterator(opts.queryDir)) {
                 auto pathObj = queryf.path();
                 std::string queryfile = queryf.path();
@@ -102,7 +102,6 @@ int reportBf(ReportOpts &opts) {
                         if (bf.query(query)) {
                             posCount++;
                         }
-                    std::cerr << "\r" << posCount;
                 }
                 finish = std::chrono::high_resolution_clock::now();
                 elapsed = finish - start;

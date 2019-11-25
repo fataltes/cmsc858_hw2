@@ -1,5 +1,5 @@
 //
-// Created by Fatemeh Almodaresi on 2019-11-02.
+// Created by Fatemeh Almodaresi on 2019-11-24.
 //
 
 #include <iostream>
@@ -13,8 +13,8 @@
 //#include "CLI/Timer.hpp"
 using namespace clipp;
 
-int constructBf(Opts &opts);
-int queryBf(Opts &opts);
+int constructBBf(Opts &opts);
+int queryBBf(Opts &opts);
 
 int main(int argc, char* argv[])  {
     (void) argc;
@@ -48,21 +48,21 @@ int main(int argc, char* argv[])  {
     bool showHelp = false;
     auto cli = (
             (bfConstructMode | bfQueryMode |
-                    command("help").set(selected,mode::help) |
-            option("--help", "-h").set(showHelp, true) % "show help"
+             command("help").set(selected,mode::help) |
+             option("--help", "-h").set(showHelp, true) % "show help"
             ));
 
     decltype(parse(argc, argv, cli)) res;
     try {
         res = parse(argc, argv, cli);
         if (showHelp) {
-            std::cout << make_man_page(cli, "bf");
+            std::cout << make_man_page(cli, "bbf");
             return 0;
         }
     } catch (std::exception &e) {
         std::cout << "\n\nparsing command line failed with exception: " << e.what() << "\n";
         std::cout << "\n\n";
-        std::cout << make_man_page(cli, "bf");
+        std::cout << make_man_page(cli, "bbf");
         return 1;
     }
 
@@ -70,11 +70,11 @@ int main(int argc, char* argv[])  {
         switch(selected) {
             case mode::construct_bf:
                 std::cerr << "construct_bf\n";
-                constructBf(opts); break;
+                constructBBf(opts); break;
             case mode::query_bf:
                 std::cerr << "query_bf\n";
-                queryBf(opts); break;
-            case mode::help: std::cout << make_man_page(cli, "bf"); break;
+                queryBBf(opts); break;
+            case mode::help: std::cout << make_man_page(cli, "bbf"); break;
         }
     }
     return EXIT_SUCCESS;

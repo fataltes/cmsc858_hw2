@@ -21,7 +21,9 @@ public:
         float fpr = fprIn;
         filterSize = static_cast<uint64_t>(std::ceil(
                 -1.0 * numKeys * std::log(fpr) / std::pow(std::log(2.0), 2))); // chosen based on numKeys and fpr
-        numHashes = static_cast<uint64_t>(std::ceil(-1.0 * std::log2(fpr)));
+//        numHashes = static_cast<uint64_t>(std::ceil(-1.0 * std::log2(fpr)));
+        numHashes = static_cast<uint64_t>(std::ceil((filterSize/(double)numKeys)*std::log(2)));
+
         if (numHashes == 0) {
             std::cerr << "ERROR! numHashes is 0. Can't construct any bloom filters\n";
             std::exit(3);
@@ -33,6 +35,7 @@ public:
         numBlocks = static_cast<uint64_t >(std::ceil((double) filterSize / blockSize));
         filterSize = numBlocks * blockSize;
         bf.resize(filterSize);
+        bf.clear_mem();
     }
 
     BBf(std::string &bfFileIn) {

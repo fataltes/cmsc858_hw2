@@ -84,6 +84,7 @@ int reportBf(ReportOpts &opts) {
             auto start = std::chrono::high_resolution_clock::now();
             Bf bf(fileName, idxFile, count, fpr);
             bf.construct();
+
             auto finish = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = finish - start;
             uint64_t constructionTime = elapsed.count();

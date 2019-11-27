@@ -21,9 +21,11 @@ public:
        uint64_t numKeys = numKeysIn;
        float fpr = fprIn;
        filterSize = static_cast<uint64_t>(std::ceil(-1.0*numKeys*std::log(fpr)/std::pow(std::log(2.0), 2))); // chosen based on numKeys and fpr
-       numHashes = static_cast<uint64_t>(std::ceil(-1.0*std::log2(fpr)));
+//       numHashes = static_cast<uint64_t>(std::ceil(-1.0*std::log2(fpr)));
+       numHashes = static_cast<uint64_t>(std::ceil((filterSize/(double)numKeys)*std::log(2)));
        std::cerr << "filter size: " << filterSize << " , numHashes: " << numHashes << "\n";
        bf.resize(filterSize);
+       bf.clear_mem();
        for (uint32_t i = 0; i < numHashes; i++) {
            seeds.push_back(i*i);
        }
@@ -45,6 +47,8 @@ public:
 
     void insert(std::string &key);
     bool query(std::string &query);
+
+    uint64_t size() {return filterSize;}
 
 private:
     compact::vector<uint64_t, 1> bf;
